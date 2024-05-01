@@ -6,5 +6,5 @@ cardiovascular measurements and diagnosis of cardiomyopathy.
 
 The model is based on the Echonet-Dynamic algorithm and for the training a compination of MobilenetV2/MobilenetV3 Neural Network architectures and DeepLabV3/DeepLabV3+ encoders is used to achieve high accuracy results.
 
-
+The 
 
