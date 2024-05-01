@@ -5,4 +5,4 @@ This is a Github Repository that contains the files for a machine learning proje
 The model is based on the Echonet-Dynamic algorithm and for the training a compination of MobilenetV2/MobilenetV3 Neural Network architectures and DeepLabV3/DeepLabV3+ encoders is used to achieve high accuracy results.
 
 The [model.py](https://github.com/George-Sakellariou/Machine-Learning-Project/blob/main/model.py) contains the code and comments for the preprocessing of the input data of ECG videos, the training of the model accordingly to the architecture and encoder that is being used and the extraction of the result in CSV document file. For the purpose of this experimental demonstration the files included on the model.py exist, but in order to simplify the explanation of the model they are not being analyzed further.
-As an example [video.py](https://github.com/George-Sakellariou/Machine-Learning-Project/blob/main/video.py) is showing the initialization of the DL segmentation model.
+As an example [video.py](https://github.com/George-Sakellariou/Machine-Learning-Project/blob/main/video.py) is showing the initialization of the DL segmentation model that is referred in model.py.
