@@ -8,3 +8,5 @@ The [model.py](https://github.com/George-Sakellariou/Machine-Learning-Project/bl
 As an example [video.py](https://github.com/George-Sakellariou/Machine-Learning-Project/blob/main/video.py) is showing the initialization of the DL segmentation model that is referred in model.py.
 
 The [training.sh](https://github.com/George-Sakellariou/Machine-Learning-Project/blob/main/training.sh) file contains the shell script that is used to train the model in various neural network architectures in different size batches to maximize speed efficiency.
+
+Finally [visual.R](https://github.com/George-Sakellariou/Machine-Learning-Project/blob/main/visual.R) file contains the R script that is used to plot the results of the previous batch training of the model.
