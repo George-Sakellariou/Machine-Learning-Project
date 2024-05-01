@@ -5,6 +5,7 @@ import csv
 import numpy as np
 import scipy.signal
 import torch
+import torch.nn.functional as F
 import onnx
 import onnxruntime as rt
 import matplotlib.pyplot as plt
@@ -13,13 +14,13 @@ import math
 import sklearn.metrics
 from tqdm import tqdm
 
-mean = [33.741943, 33.877575, 34.1646] #Mean from echonet paper
-std = [51.184673, 51.356464, 51.660316] #Standard deviation from echonet paper
+mean = [33.741943, 33.877575, 34.1646]    #Mean Absolute Error from the Echonet Algorithm
+std = [51.184673, 51.356464, 51.660316]   #Standard deviation from the Echonet Algorithm
 torch.set_printoptions(threshold=sys.maxsize)
 np.set_printoptions(threshold=sys.maxsize)
 bigger_than_64 = True
 
-#Function for loading the video
+#Function for processing and loading the ECG video to the model
 def load_video(input_filepath):
     #Get video frames, width and height to initialize the array that stores video frames
     vid = cv2.VideoCapture(input_filepath)
@@ -48,15 +49,15 @@ def load_video(input_filepath):
     
     return final_video, video_frames #final_video stores the input video
 
-'''Function for the computation of the Ejection Fraction
+'''Function for the computation of the Cardiovascular measurements
     As arguments we have:
-    i) lvef_model_path : The onnx inference model for ejection fraction computation
+    i) lvef_model_path : The onnx inference model for model computations
     ii) input_filepath : The path to the input video fileList
-    iii) segmentation_model_path : The onnx inference model for the segmentation module from the echonet'''
+    iii) segmentation_model_path : The onnx inference model for the segmentation module for the input video file'''
 def ef_module(lvef_model_path, input_filepath, segmentation_model_path):
 
     final_video, video_frames = load_video(input_filepath)
-    normalized_video = (final_video - mean) / std #Normalize the video with reference to mean and std from the echonet.
+    normalized_video = (final_video - mean) / std #Normalize the video with reference to MAE and STD from Echonet Algorithm
 
     ort_segm_session = rt.InferenceSession(segmentation_model_path) #Load the onnx segmentation model
     video_array = (len(final_video), 112, 112) #Make an array with dimensions equal to the input video
@@ -71,9 +72,7 @@ def ef_module(lvef_model_path, input_filepath, segmentation_model_path):
         segmentation = ort_segm_session.run(None, ort_input)[0][0][0] #Run segmentation model
         segmented_video[i] = segmentation #Store output
 
-    #print(segmented_video.shape)
-
-    #Check for video with less than 64 frames that is not suitable for computing EF
+    #Check for video with less than 64 frames that is not suitable for computing measurements because data are inefficient
     bigger_than_64 = True
     if video_frames < 64:
         print(input_filepath, 'Video too small to calculate Ejection Fraction', video_frames)
@@ -94,19 +93,17 @@ def ef_module(lvef_model_path, input_filepath, segmentation_model_path):
 
     for (frame, s) in enumerate(size):
         size_table[frame] =[frame, s, 1 if frame in systole else 1] #Store the information of a frame containing a peak(1) or not(0)
-        #if frame in systole:
-            #print(frame)
 
     predictions = []
-    ort_echo_session = rt.InferenceSession(lvef_model_path) #Load the onnx estimate ejection fraction model
+    ort_echo_session = rt.InferenceSession(lvef_model_path) #Load the onnx estimate measurements model
 
     '''The shape of the input normalized_video is (video_frames, 112, 112, 3).
         First we convert the shape to (1, 3, 32-frames, 112, 112) to match the input of the segmentation model
         and after that we give as input a clip consisting of 32 frames each after each frame of every 64 frames.'''
     for i in range(len(normalized_video) - 64):
 
-        ort_input = {ort_echo_session.get_inputs()[0].name: (np.expand_dims(np.transpose(normalized_video, (3,0,1,2)), axis = 0))[:, :, i:i+64:2, :, :].astype(np.float32)} #Get input for the EF model
-        lvef = ort_echo_session.run(None, ort_input)[0][0][0] #Run EF model
+        ort_input = {ort_echo_session.get_inputs()[0].name: (np.expand_dims(np.transpose(normalized_video, (3,0,1,2)), axis = 0))[:, :, i:i+64:2, :, :].astype(np.float32)} #Get input for the computation model
+        lvef = ort_echo_session.run(None, ort_input)[0][0][0] #Run computation model
         predictions.append(lvef) #store output prediction
 
     #Calculations for the computation of the BeatToBeat ejection fraction mean and standard deviation values
@@ -129,7 +126,8 @@ def ef_module(lvef_model_path, input_filepath, segmentation_model_path):
     final_beatByBeat_mean = np.asarray(beatByBeat['EF'].mean()) #Compute mean of ejection fraction
    
     return final_beatByBeat_mean
-
+    
+#The initialization of the paths is unique for each computer environment that the model is running
 dataset_path = '/home/georgios/dynamic/a4c-video-dir/'
 lvef_model_path = '/home/georgios/dynamic/a4c-video-dir/infer_data/EchoNet_pretrained.onnx'
 segmentation_model_path = '/home/georgios/dynamic/a4c-video-dir/infer_data/EchoNet_segmentation.onnx'
