@@ -6,5 +6,5 @@ cardiovascular measurements and diagnosis of cardiomyopathy.
 
 The model is based on the Echonet-Dynamic algorithm and for the training a compination of MobilenetV2/MobilenetV3 Neural Network architectures and DeepLabV3/DeepLabV3+ encoders is used to achieve high accuracy results.
 
-The 
+The [model.py](https://github.com/George-Sakellariou/Machine-Learning-Project/blob/main/model.py) contains the code and comments for the preprocessing of the input data of ECG videos, the training of the model accordingly to the architecture and encoder that is being used and the extraction of the result in CSV document file.
 
