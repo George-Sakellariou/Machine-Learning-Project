@@ -9,4 +9,5 @@ As an example [video.py](https://github.com/George-Sakellariou/Machine-Learning-
 
 The [training.sh](https://github.com/George-Sakellariou/Machine-Learning-Project/blob/main/training.sh) file contains the shell script that is used to train the model in various neural network architectures in different size batches to maximize speed efficiency.
 
-Finally [visual.R](https://github.com/George-Sakellariou/Machine-Learning-Project/blob/main/visual.R) file contains the R script that is used to plot the results of the previous batch training of the model.
+Finally [visual.R](https://github.com/George-Sakellariou/Machine-Learning-Project/blob/main/visual.R) file contains the R script that is used to plot the results of the previous batch training of the model. 
+[bbxV@DP.jpeg](https://github.com/George-Sakellariou/Machine-Learning-Project/blob/main/bbxV%40DP.jpeg) is an example of the MAE in different batch training with MobileNetV2 architecture of neural network and DeepLabV3 as encoder.
