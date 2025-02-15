@@ -25,7 +25,8 @@ model = torch.nn.DataParallel(model) #set data parallelism at the module level
 
 onnxin = input[0] #start iteration
 
-model.to(device) #pass model to device for conversion
+model.to(device) #pass model to device for conversion / cuda if gpu enabled
+print(model)
 
 weights = '/home/georgios/dynamic/output/video/deepLabV3_pretrained/checkpoint.pt' #set initial weights for the nn model
 
